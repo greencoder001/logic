@@ -1,0 +1,10 @@
+import cli
+import random
+
+print('Hello World')
+
+repeat 10:
+    if random.bit() == 1:
+        print('T')
+    else:
+        print('F')
