@@ -1,0 +1,1 @@
+var sleep=function(t,f){setTimeOut(f,t)};

@@ -1,0 +1,4 @@
+import random as logicrandomhandler
+def logicrandomrbit():
+  return logicrandomhandler.randint(0,2)
+random={"bit":logicrandomrbit,"cryptobit":logicrandomrbit,"int":logicrandomhandler.randint}

@@ -1,3 +1,11 @@
+import os
+
+try:
+  import pathlib
+except ImportError:
+  print("Trying to Install required module: pathlib\n")
+  os.system('python -m pip install pathlib')
+
 import sys
 import pathlib
 from lgexport import getfextension, export
@@ -28,5 +36,5 @@ for pathtype in filepath.split('/'):
             j += 1
     i += 1
 exppath = exportpath + fname + getfextension(export_type)
-export(compilelgs(filepath, exportpath, fname, export_type), exppath)
+export(compilelgs(filepath, exportpath, fname, export_type), exppath, exportpath, fname, getfextension(export_type))
 print('Successfully exported')
