@@ -4,7 +4,14 @@ def imppkg(expt, pkg):
     fi.close()
     return pkex
 
+def phtml(c):
+    return f"""
+
+    """
+
 def ugly(c, lang):
+    if lang == 'web' or lang == 'html' or lang == 'htm':
+        c = phtml(c)
     return c
 
 def compilelgs(filepath, exportpath, fname, export_type):

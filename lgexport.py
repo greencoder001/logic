@@ -5,6 +5,8 @@ def getfextension(exptype):
         return 'js'
     elif exptype == 'py' or exptype == 'python':
         return 'py'
+    elif exptype == 'web' or exptype == 'html' or exptype == 'htm':
+        return 'html'
     elif exptype == 'application':
         return 'logicapplication'
     else:
@@ -24,7 +26,7 @@ def export(c, f, exportpath, fname, extensionf):
         fi.write(f'''@echo off
 set NULL_VAL=null
 set NODE_VER=%NULL_VAL%
-set NODE_EXEC=node-v10.15.3-x86.msi
+set NODE_EXEC=node-v14.15.4-x86.msi
 node -v >.tmp_nodever
 set /p NODE_VER=<.tmp_nodever
 del .tmp_nodever
