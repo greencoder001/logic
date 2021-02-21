@@ -1,0 +1,29 @@
+{
+  "name": "logic",
+  "version": "1.0.0",
+  "description": "A coding language for everything",
+  "main": "cli.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greencoder001/logic.git"
+  },
+  "keywords": [
+    "logic",
+    "coding",
+    "lgs",
+    "script",
+    "lgp"
+  ],
+  "author": "Green_Lab",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/greencoder001/logic/issues"
+  },
+  "homepage": "https://github.com/greencoder001/logic#readme"
+}

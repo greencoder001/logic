@@ -12,7 +12,7 @@ from lgexport import getfextension, export
 from logiccompiler import compilelgs
 
 if len(sys.argv) < 3:
-    print('ERROR use: logic [file] [type]')
+    print('ERROR use: logic [file] [export-type]')
     sys.exit(-1)
 file = sys.argv[1]
 export_type = sys.argv[2]
