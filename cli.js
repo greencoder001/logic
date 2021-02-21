@@ -9,10 +9,12 @@ if (argv.length < 2) {
 }
 
 const file = argv[0]
-const export_type = argv[1]
+const exportType = argv[1]
 const __path = process.cwd()
 const filepath = path.join(__path, file).replace(/\\/g, '/')
-const exportpath = ''
-const fname = ''
+const exportpath = path.dirname(filepath)
+const fname = path.basename(filepath, '.logic')
+const exppath = path.join(exportpath, fname + '.' + getFileExtension(exportType))
 
-console.log(filepath)
+exportFun(compile(filepath, exportpath, fname, exportType), exppath, exportpath, fname, getFileExtension(exportType))
+console.log('Successfully exported')
