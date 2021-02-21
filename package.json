@@ -2,11 +2,13 @@
   "name": "logic",
   "version": "1.0.0",
   "description": "A coding language for everything",
+  "bin": "cli.js",
   "main": "cli.js",
   "directories": {
     "example": "examples"
   },
   "scripts": {
+    "ideps": "npm i",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -25,5 +27,8 @@
   "bugs": {
     "url": "https://github.com/greencoder001/logic/issues"
   },
-  "homepage": "https://github.com/greencoder001/logic#readme"
+  "homepage": "https://github.com/greencoder001/logic#readme",
+  "dependencies": {
+    "nexe": "^4.0.0-beta.17"
+  }
 }

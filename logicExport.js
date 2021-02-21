@@ -1,3 +1,7 @@
+const fs = require('fs')
+const path = require('path')
+const nexe = require('nexe')
+
 function getFileExtension (exptype) {
   if (exptype === 'webjs' || exptype === 'js' || exptype === 'javascript') {
     return 'js'
@@ -13,7 +17,16 @@ function getFileExtension (exptype) {
 }
 
 function exportFun (c, f, exportpath, fname, extensionf) {
-
+  if (f.endsWith('.__logicapplication__')) {
+    const folder = path.join(exportpath, fname)
+    if (!fs.existsSync(folder)) {
+      fs.mkdirSync(folder)
+    }
+    fs.writeFileSync(path.join(folder, fname + '.js'), c)
+    // nexe.compile() here
+  } else {
+    fs.writeFileSync(f, c)
+  }
 }
 
 module.exports = {
