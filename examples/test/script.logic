@@ -1,6 +1,6 @@
 import cli
 import random
-import gui
+import weirdconcatting
 
 print('Hello World')
 
