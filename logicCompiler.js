@@ -1,21 +1,22 @@
 const fs = require('fs')
 const path = require('path')
-const sleep = timeout => { return new Promise((resolve, reject) => { setTimeout(() => { resolve() }, timeout) }) }
+const { LGPImportError } = require('./errors.js')
 
 async function imppkg (expt, pkgname, pathdir4proj) {
-  console.log(path.join(__dirname, path.join('pkg', path.join(expt, `${pkgname.trim()}.lgp`))))
-  // if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.logic`))) {
-  //   return fs.readFileSync(path.join(pathdir4proj, `${pkgname}.logic`))
-  // } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.lgp`))) {
-  //   return fs.readFileSync(path.join(pathdir4proj, `${pkgname}.lgp`))
-  // } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.lgs`))) {
-  //   return fs.readFileSync(path.join(pathdir4proj, `${pkgname}.lgs`))
-  // } else if (fs.existsSync(path.join(__dirname, path.join('pkg', path.join(expt, `${pkgname}.lgp`))))) {
-  //   return fs.readFileSync(path.join(__dirname, path.join('pkg', path.join(expt, `${pkgname}.lgp`))))
-  // }
-
-  await sleep(1000)
-  return pkgname
+  const pkpath = path.join(__dirname, path.join('pkg', path.join(expt, `${pkgname.trim()}.lgp`)))
+  if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.logic`))) {
+    return fs.readFileSync(path.join(pathdir4proj, `${pkgname.trim()}.logic`))
+  } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname.trim()}.lgp`))) {
+    return fs.readFileSync(path.join(pathdir4proj, `${pkgname.trim()}.lgp`))
+  } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname.trim()}.lgs`))) {
+    return fs.readFileSync(path.join(pathdir4proj, `${pkgname.trim()}.lgs`))
+  } else if (fs.existsSync(pkpath)) {
+    return fs.readFileSync(pkpath)
+  } else {
+    const err = new LGPImportError(pkgname.trim())
+    err.throwLog()
+    return err.str()
+  }
 }
 
 async function compile (filepath, exportpath, fname, exportType, fex) {
