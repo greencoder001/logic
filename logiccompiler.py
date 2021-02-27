@@ -5,9 +5,7 @@ def imppkg(expt, pkg):
     return pkex
 
 def phtml(c):
-    return f"""
-
-    """
+    return f'<!DOCTYPE html><html><head><meta charset="utf-8" /><script type="text/javascript">{c}</script></head><body></body></html>'
 
 def ugly(c, lang):
     if lang == 'web' or lang == 'html' or lang == 'htm':
