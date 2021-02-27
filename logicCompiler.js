@@ -1,19 +1,21 @@
 const fs = require('fs')
 const path = require('path')
+const sleep = timeout => { return new Promise((resolve, reject) => { setTimeout(() => { resolve() }, timeout) }) }
 
 async function imppkg (expt, pkgname, pathdir4proj) {
-  console.log(('/pkg/' + expt + '/' + pkgname + '.lgp').replace('.lgp', ''))
-  if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.logic`))) {
-    return fs.readFileSync(path.join(pathdir4proj, `${pkgname}.logic`))
-  } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.lgp`))) {
-    return fs.readFileSync(path.join(pathdir4proj, `${pkgname}.lgp`))
-  } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.lgs`))) {
-    return fs.readFileSync(path.join(pathdir4proj, `${pkgname}.lgs`))
-  } else if (fs.existsSync(path.join(__dirname, path.join('pkg', path.join(expt, `${pkgname}.lgp`))))) {
-    return fs.readFileSync(path.join(__dirname, path.join('pkg', path.join(expt, `${pkgname}.lgp`))))
-  }
+  console.log(path.join(__dirname, path.join('pkg', path.join(expt, `${pkgname}.lgp`))))
+  // if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.logic`))) {
+  //   return fs.readFileSync(path.join(pathdir4proj, `${pkgname}.logic`))
+  // } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.lgp`))) {
+  //   return fs.readFileSync(path.join(pathdir4proj, `${pkgname}.lgp`))
+  // } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.lgs`))) {
+  //   return fs.readFileSync(path.join(pathdir4proj, `${pkgname}.lgs`))
+  // } else if (fs.existsSync(path.join(__dirname, path.join('pkg', path.join(expt, `${pkgname}.lgp`))))) {
+  //   return fs.readFileSync(path.join(__dirname, path.join('pkg', path.join(expt, `${pkgname}.lgp`))))
+  // }
 
-  return new Promise((resolve, reject) => { setTimeout(() => { resolve(pkgname) }, 1000) })
+  await sleep(1000)
+  return pkgname
 }
 
 async function compile (filepath, exportpath, fname, exportType, fex) {
