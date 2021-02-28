@@ -1,6 +1,7 @@
 import cli
 import random
-import gui
+// import gui
+import lgptest
 
 print('Hello World')
 
@@ -16,5 +17,5 @@ repeat 100:
 print(`${fCount}x 0`)
 print(`${tCount}x 1`)
 
-var win = new Window()
-win.load('./gui1', 7895)
+// var win = new Window()
+// win.load('./gui1', 7895)
