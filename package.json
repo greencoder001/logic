@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/greencoder001/logic#readme",
   "dependencies": {
+    "axios": "^0.21.1",
     "nexe": "^4.0.0-beta.17"
   }
 }

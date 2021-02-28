@@ -1,21 +1,73 @@
 const fs = require('fs')
 const path = require('path')
-const sleep = timeout => { return new Promise((resolve, reject) => { setTimeout(() => { resolve() }, timeout) }) }
+const { LGPImportError, LGPInvalidPkgError } = require('./errors.js')
+const axios = require('axios')
+
+const DefaultLGPIndex = 'lgp.greencoder001.repl.co'
+const LGPIndex = (process.argv[4] === 'default' ? DefaultLGPIndex : process.argv[4]) || DefaultLGPIndex
+/*
+0: NODE_PATH
+1: FILE
+2: LOGIC_SCRIPT
+3: LANGUAGE
+4: LGPINDEX [OPTIONAL]
+*/
+
+async function getLgpPkg (pkname) {
+  const err = new LGPInvalidPkgError(pkname)
+
+  let response = null
+  try {
+    response = await axios.get(`https://${LGPIndex}/get/${encodeURIComponent(pkname)}`)
+  } catch {
+    err.throwLog()
+    return err.str()
+  }
+
+  const data = response.data
+  if (data && data.content && data.lang) {
+    return `/* Start LGP Package: ${pkname} */\n${data.content}\n/* End LGP Package: ${pkname} */`
+  } else {
+    err.throwLog()
+    return err.str()
+  }
+}
+
+async function isLgpPkg (pkname) {
+  let response = null
+  try {
+    response = await axios.get(`https://${LGPIndex}/get/${encodeURIComponent(pkname)}`)
+  } catch {
+    return false
+  }
+  const data = `${response.data}`.trim()
+  if (data.startsWith('LGP_ERRROR:')) {
+    return false
+  } else {
+    if (response.data && response.data.content && response.data.lang) {
+      return true
+    }
+  }
+  return false
+}
 
 async function imppkg (expt, pkgname, pathdir4proj) {
-  console.log(path.join(__dirname, path.join('pkg', path.join(expt, `${pkgname.trim()}.lgp`))))
-  // if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.logic`))) {
-  //   return fs.readFileSync(path.join(pathdir4proj, `${pkgname}.logic`))
-  // } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.lgp`))) {
-  //   return fs.readFileSync(path.join(pathdir4proj, `${pkgname}.lgp`))
-  // } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.lgs`))) {
-  //   return fs.readFileSync(path.join(pathdir4proj, `${pkgname}.lgs`))
-  // } else if (fs.existsSync(path.join(__dirname, path.join('pkg', path.join(expt, `${pkgname}.lgp`))))) {
-  //   return fs.readFileSync(path.join(__dirname, path.join('pkg', path.join(expt, `${pkgname}.lgp`))))
-  // }
-
-  await sleep(1000)
-  return pkgname
+  const pkpath = path.join(__dirname, path.join('pkg', path.join(expt, `${pkgname.trim()}.lgp`)))
+  if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.logic`))) {
+    return fs.readFileSync(path.join(pathdir4proj, `${pkgname.trim()}.logic`))
+  } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname.trim()}.lgp`))) {
+    return fs.readFileSync(path.join(pathdir4proj, `${pkgname.trim()}.lgp`))
+  } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname.trim()}.lgs`))) {
+    return fs.readFileSync(path.join(pathdir4proj, `${pkgname.trim()}.lgs`))
+  } else if (fs.existsSync(pkpath)) {
+    return fs.readFileSync(pkpath)
+  } else if (await isLgpPkg(pkgname.trim())) {
+    return await getLgpPkg(pkgname.trim())
+  } else {
+    const err = new LGPImportError(pkgname.trim())
+    err.throwLog()
+    return err.str()
+  }
 }
 
 async function compile (filepath, exportpath, fname, exportType, fex) {
