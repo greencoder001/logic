@@ -10,7 +10,7 @@ const LGPIndex = (process.argv[4] === 'default' ? DefaultLGPIndex : process.argv
 1: FILE
 2: LOGIC_SCRIPT
 3: LANGUAGE
-4: LGPINDEX
+4: LGPINDEX [OPTIONAL]
 */
 
 async function isLgpPkg (pkname) {
