@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { LGPImportError } = require('./errors.js')
+const { LGPImportError, LGPInvalidPkgError } = require('./errors.js')
 const axios = require('axios')
 
 const DefaultLGPIndex = 'lgp.greencoder001.repl.co'
@@ -12,6 +12,26 @@ const LGPIndex = (process.argv[4] === 'default' ? DefaultLGPIndex : process.argv
 3: LANGUAGE
 4: LGPINDEX [OPTIONAL]
 */
+
+async function getLgpPkg (pkname) {
+  const err = new LGPInvalidPkgError(pkname)
+
+  let response = null
+  try {
+    response = await axios.get(`https://${LGPIndex}/get/${encodeURIComponent(pkname)}`)
+  } catch {
+    err.throwLog()
+    return err.str()
+  }
+
+  const data = response.data
+  if (data && data.content && data.lang) {
+    return `/* Start LGP Package: ${pkname} */\n${data.content}\n/* End LGP Package: ${pkname} */`
+  } else {
+    err.throwLog()
+    return err.str()
+  }
+}
 
 async function isLgpPkg (pkname) {
   let response = null
@@ -42,7 +62,7 @@ async function imppkg (expt, pkgname, pathdir4proj) {
   } else if (fs.existsSync(pkpath)) {
     return fs.readFileSync(pkpath)
   } else if (await isLgpPkg(pkgname.trim())) {
-    console.log('LGP Module Found')
+    return await getLgpPkg(pkgname.trim())
   } else {
     const err = new LGPImportError(pkgname.trim())
     err.throwLog()

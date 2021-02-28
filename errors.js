@@ -14,4 +14,20 @@ exit(ERR_EXIT_CODE)`
   }
 }
 
-module.exports = { LGPImportError }
+class LGPInvalidPkgError extends Error {
+  constructor (pkgname) {
+    super(`LGP: Invalid Package ${pkgname}`)
+    this.name = 'LGPInvalidPkgError'
+  }
+
+  str () {
+    return `print("${this.message}")
+exit(ERR_EXIT_CODE)`
+  }
+
+  throwLog () {
+    console.log(`${this.name}: ${this.message}`)
+  }
+}
+
+module.exports = { LGPImportError, LGPInvalidPkgError }

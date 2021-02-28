@@ -1,6 +1,6 @@
 import cli
 import random
-// import gui
+import gui
 import lgptest
 
 print('Hello World')
