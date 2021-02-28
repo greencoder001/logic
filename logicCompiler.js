@@ -71,11 +71,22 @@ async function imppkg (expt, pkgname, pathdir4proj) {
 }
 
 async function compile (filepath, exportpath, fname, exportType, fex) {
-  const content = fs.readFileSync(filepath).toString('utf8')
+  if (!fs.existsSync(path.join(exportpath, '__logic__'))) {
+    fs.mkdirSync(path.join(exportpath, '__logic__'))
+  }
+
+  let content = fs.readFileSync(filepath).toString('utf8')
+  const importLogic = !(content.includes('# NO_LOGIC_IMPORT;') || content.includes('#NO_LOGIC_IMPORT;'))
+
+  content = content.replace(/#(.*?);/g, '/* #$1; */')
 
   let exported = ''
   let ifConditions = 0
   const linesall = content.split('\n')
+
+  if (importLogic) {
+    linesall.unshift('import logic')
+  }
 
   if (fex === 'js' || fex === '.__logicapplication__') {
     linesall.push('/* @endfile; */')
