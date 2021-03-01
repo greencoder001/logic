@@ -74,9 +74,11 @@ async function compile (filepath, exportpath, fname, exportType, fex) {
   if (!fs.existsSync(path.join(exportpath, '__logic__'))) {
     fs.mkdirSync(path.join(exportpath, '__logic__'))
   }
-
   if (!fs.existsSync(path.join(exportpath, path.join('__logic__', fname)))) {
     fs.mkdirSync(path.join(exportpath, path.join('__logic__', fname)))
+  }
+  if (!fs.existsSync(path.join(exportpath, path.join('__logic__', path.join(fname, '__modules__'))))) {
+    fs.mkdirSync(path.join(exportpath, path.join('__logic__', path.join(fname, '__modules__'))))
   }
 
   const content = fs.readFileSync(filepath).toString('utf8')
@@ -101,6 +103,10 @@ async function compile (filepath, exportpath, fname, exportType, fex) {
     if (trimmed.startsWith('import ')) {
       const pkgname = withoutTabs.substr(7)
       exported += await imppkg(exportType, pkgname, exportpath) + '\n'
+    } else if (withoutTabs.startsWith('if') && withoutTabs.endsWith(':') && (fex === 'js' || fex === '.__logicapplication__')) {
+      const condition = withoutTabs.substr(3, withoutTabs.length - 4)
+      exported += 'if(' + condition + '){\n'
+      ifConditions += 1
     } else {
       let tabcount = 0
       const lb = line

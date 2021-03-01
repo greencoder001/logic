@@ -22,6 +22,9 @@ print('Hello World')
 var tCount = 0
 var fCount = 0
 
+if aaaa:
+run(say('hi'))
+
 repeat 100:
 if random.bit() == 1:
 tCount += 1
