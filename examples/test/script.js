@@ -1,8 +1,6 @@
 /* Start LGP Package: logic */
-// LOGIC_NOTE__NO_LOGIC_IMPORT
-zone js webjs application web html htm:
-  import lgp:https://raw.githubusercontent.com/greencoder001/lgp_logic/main/MultiClassJS.logic
-  print('JSBASED')
+import lgp:https://raw.githubusercontent.com/greencoder001/lgp_logic/main/cli.logic
+var ERR_EXIT_CODE = 1
 
 
 /* End LGP Package: logic */
@@ -16,6 +14,8 @@ exit(ERR_EXIT_CODE)
 print('LGP is working!')
 
 /* End LGP Package: lgptest */
+print("LGP: Can't find Package tracking")
+exit(ERR_EXIT_CODE)
 
 print('Hello World')
 
@@ -31,7 +31,15 @@ fCount += 1
 print(`${fCount}x 0`)
 print(`${tCount}x 1`)
 
-// var win = new Window()
-// win.load('./gui1', 7895)
+var win = new Window()
+win.on('ready', -> {
+win.setTitle('Example')
+win.setDir('ltr')
+win.setLang(track().language)
+win.body.set(`
+<h1>Example</h1>
+`)
+win.$('h1').set(win.$('h1').get() + ' <i>(Edited)</i>')
+})
 
 /* @endfile; */

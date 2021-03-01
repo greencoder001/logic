@@ -75,10 +75,12 @@ async function compile (filepath, exportpath, fname, exportType, fex) {
     fs.mkdirSync(path.join(exportpath, '__logic__'))
   }
 
-  let content = fs.readFileSync(filepath).toString('utf8')
-  const importLogic = !(content.includes('# NO_LOGIC_IMPORT;') || content.includes('#NO_LOGIC_IMPORT;'))
+  if (!fs.existsSync(path.join(exportpath, path.join('__logic__', fname)))) {
+    fs.mkdirSync(path.join(exportpath, path.join('__logic__', fname)))
+  }
 
-  content = content.replace(/#(.*?);/g, '/* #$1; */')
+  const content = fs.readFileSync(filepath).toString('utf8')
+  const importLogic = !(content.includes('# NO_LOGIC_IMPORT;') || content.includes('#NO_LOGIC_IMPORT;'))
 
   let exported = ''
   let ifConditions = 0
@@ -120,7 +122,7 @@ async function compile (filepath, exportpath, fname, exportType, fex) {
     }
   }
 
-  return exported
+  return exported.replace(/#(.*?);/g, '/* #$1; */')
 }
 
 module.exports = {

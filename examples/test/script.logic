@@ -2,6 +2,7 @@ import cli
 import random
 import gui
 import lgptest
+import tracking
 
 print('Hello World')
 
@@ -17,5 +18,13 @@ repeat 100:
 print(`${fCount}x 0`)
 print(`${tCount}x 1`)
 
-// var win = new Window()
-// win.load('./gui1', 7895)
+var win = new Window()
+win.on('ready', -> {
+  win.setTitle('Example')
+  win.setDir('ltr')
+  win.setLang(track().language)
+  win.body.set(`
+    <h1>Example</h1>
+  `)
+  win.$('h1').set(win.$('h1').get() + ' <i>(Edited)</i>')
+})
