@@ -11,6 +11,7 @@ var random={int:function(min,max){return Math.floor(Math.random()*(max-min)+min)
 print("LGP: Can't find Package gui")
 exit(ERR_EXIT_CODE)
 /* Start LGP Package: lgptest */
+import lgp:https://gist.githubusercontent.com/greencoder001/191e4c1099b83ee61fab1bef0b01ea19/raw/17b50f64396ade819966e3bf4f934c89a7ccbd22/importtest.logic
 print('LGP is working!')
 
 /* End LGP Package: lgptest */
@@ -21,9 +22,6 @@ print('Hello World')
 
 var tCount = 0
 var fCount = 0
-
-if aaaa:
-run(say('hi'))
 
 repeat 100:
 if random.bit() == 1:

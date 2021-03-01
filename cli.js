@@ -20,7 +20,11 @@ async function main () {
   try {
     exportFun(await compile(filepath, exportpath, fname, exportType, getFileExtension(exportType)), exppath, exportpath, fname, getFileExtension(exportType))
   } catch (err) {
-    err.throwLog()
+    try {
+      err.throwLog()
+    } catch {
+      console.error(err)
+    }
     process.exit(1)
   }
   return `Successfully compiled ${fname}`

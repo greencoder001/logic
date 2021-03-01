@@ -2,6 +2,8 @@ const fs = require('fs')
 const path = require('path')
 const { LGPImportError, LGPInvalidPkgError, FileDoesntExistsError } = require('./errors.js')
 const axios = require('axios')
+const caching = require('./cache.js')
+const chalk = require('chalk')
 
 const DefaultLGPIndex = 'lgp.greencoder001.repl.co'
 const LGPIndex = (process.argv[4] === 'default' ? DefaultLGPIndex : process.argv[4]) || DefaultLGPIndex
@@ -51,20 +53,38 @@ async function isLgpPkg (pkname) {
   return false
 }
 
-async function imppkg (expt, pkgname, pathdir4proj) {
+async function imppkg (expt, pkgname, pathdir4proj, fname) {
+  const cfile = path.join(pathdir4proj, path.join('__logic__', path.join(fname, path.join('__modules__', 'cache.json'))))
   const pkpath = path.join(__dirname, path.join('pkg', path.join(expt, `${pkgname.trim()}.lgp`)))
-  if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.logic`))) {
-    return fs.readFileSync(path.join(pathdir4proj, `${pkgname.trim()}.logic`))
-  } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname.trim()}.lgp`))) {
-    return fs.readFileSync(path.join(pathdir4proj, `${pkgname.trim()}.lgp`))
-  } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname.trim()}.lgs`))) {
-    return fs.readFileSync(path.join(pathdir4proj, `${pkgname.trim()}.lgs`))
+  pkgname = pkgname.trim()
+  if (pkgname.startsWith('lgp:')) {
+    const realpkgname = pkgname.split('/')[pkgname.split('/').length - 1]
+    console.log(realpkgname)
+  } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.logic`))) {
+    return fs.readFileSync(path.join(pathdir4proj, `${pkgname}.logic`))
+  } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.lgp`))) {
+    return fs.readFileSync(path.join(pathdir4proj, `${pkgname}.lgp`))
+  } else if (fs.existsSync(path.join(pathdir4proj, `${pkgname}.lgs`))) {
+    return fs.readFileSync(path.join(pathdir4proj, `${pkgname}.lgs`))
   } else if (fs.existsSync(pkpath)) {
     return fs.readFileSync(pkpath)
-  } else if (await isLgpPkg(pkgname.trim())) {
-    return await getLgpPkg(pkgname.trim())
+  } else if (await isLgpPkg(pkgname)) {
+    // Compile Package
+    const ctime = caching.ctime()
+    const cache = JSON.parse(fs.readFileSync(cfile).toString('utf-8'))
+    const needsToFetch = cache[pkgname] !== ctime
+    if (needsToFetch) {
+      console.log(chalk.keyword('orange')('[LGP] Fetching ' + pkgname))
+      cache[pkgname] = ctime
+      fs.writeFileSync(cfile, JSON.stringify(cache))
+      const fetched = await getLgpPkg(pkgname)
+      fs.writeFileSync(path.join(pathdir4proj, path.join('__logic__', path.join(fname, path.join('__modules__', `${pkgname}.lgp`)))), fetched)
+      return fetched
+    } else {
+      return fs.readFileSync(path.join(pathdir4proj, path.join('__logic__', path.join(fname, path.join('__modules__', `${pkgname}.lgp`)))))
+    }
   } else {
-    const err = new LGPImportError(pkgname.trim())
+    const err = new LGPImportError(pkgname)
     err.throwLog()
     return err.str()
   }
@@ -79,6 +99,9 @@ async function compile (filepath, exportpath, fname, exportType, fex) {
   }
   if (!fs.existsSync(path.join(exportpath, path.join('__logic__', path.join(fname, '__modules__'))))) {
     fs.mkdirSync(path.join(exportpath, path.join('__logic__', path.join(fname, '__modules__'))))
+  }
+  if (!fs.existsSync(path.join(exportpath, path.join('__logic__', path.join(fname, path.join('__modules__', 'cache.json')))))) {
+    fs.writeFileSync(path.join(exportpath, path.join('__logic__', path.join(fname, path.join('__modules__', 'cache.json')))), '{}')
   }
 
   var content
@@ -108,7 +131,7 @@ async function compile (filepath, exportpath, fname, exportType, fex) {
 
     if (trimmed.startsWith('import ')) {
       const pkgname = withoutTabs.substr(7)
-      exported += await imppkg(exportType, pkgname, exportpath) + '\n'
+      exported += await imppkg(exportType, pkgname, exportpath, fname) + '\n'
     } else if (withoutTabs.startsWith('if') && withoutTabs.endsWith(':') && (fex === 'js' || fex === '.__logicapplication__')) {
       const condition = withoutTabs.substr(3, withoutTabs.length - 4)
       console.log(condition)

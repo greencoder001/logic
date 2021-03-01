@@ -1,3 +1,5 @@
+const chalk = require('chalk')
+
 class LGPImportError extends Error {
   constructor (pkgname) {
     super(`LGP: Can't find Package ${pkgname}`)
@@ -10,7 +12,7 @@ exit(ERR_EXIT_CODE)`
   }
 
   throwLog () {
-    console.log(`${this.name}: ${this.message}`)
+    console.log(chalk.red(`${this.name}: ${this.message}`))
   }
 }
 
@@ -26,7 +28,7 @@ exit(ERR_EXIT_CODE)`
   }
 
   throwLog () {
-    console.log(`${this.name}: ${this.message}`)
+    console.log(chalk.red(`${this.name}: ${this.message}`))
   }
 }
 
@@ -42,7 +44,7 @@ exit(ERR_EXIT_CODE)`
   }
 
   throwLog () {
-    console.log(`${this.name}: ${this.message}`)
+    console.log(chalk.red(`${this.name}: ${this.message}`))
   }
 }
 
