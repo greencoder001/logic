@@ -1,6 +1,6 @@
 const fs = require('fs')
 const path = require('path')
-const { LGPImportError, LGPInvalidPkgError } = require('./errors.js')
+const { LGPImportError, LGPInvalidPkgError, FileDoesntExistsError } = require('./errors.js')
 const axios = require('axios')
 
 const DefaultLGPIndex = 'lgp.greencoder001.repl.co'
@@ -81,7 +81,13 @@ async function compile (filepath, exportpath, fname, exportType, fex) {
     fs.mkdirSync(path.join(exportpath, path.join('__logic__', path.join(fname, '__modules__'))))
   }
 
-  const content = fs.readFileSync(filepath).toString('utf8')
+  var content
+
+  try {
+    content = fs.readFileSync(filepath).toString('utf8')
+  } catch {
+    throw new FileDoesntExistsError(filepath)
+  }
   const importLogic = !(content.includes('# NO_LOGIC_IMPORT;') || content.includes('#NO_LOGIC_IMPORT;'))
 
   let exported = ''
@@ -105,6 +111,7 @@ async function compile (filepath, exportpath, fname, exportType, fex) {
       exported += await imppkg(exportType, pkgname, exportpath) + '\n'
     } else if (withoutTabs.startsWith('if') && withoutTabs.endsWith(':') && (fex === 'js' || fex === '.__logicapplication__')) {
       const condition = withoutTabs.substr(3, withoutTabs.length - 4)
+      console.log(condition)
       exported += 'if(' + condition + '){\n'
       ifConditions += 1
     } else {

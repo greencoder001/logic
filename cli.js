@@ -17,7 +17,12 @@ async function main () {
   const fname = path.basename(filepath, '.logic')
   const exppath = path.join(exportpath, fname + '.' + getFileExtension(exportType))
 
-  exportFun(await compile(filepath, exportpath, fname, exportType, getFileExtension(exportType)), exppath, exportpath, fname, getFileExtension(exportType))
+  try {
+    exportFun(await compile(filepath, exportpath, fname, exportType, getFileExtension(exportType)), exppath, exportpath, fname, getFileExtension(exportType))
+  } catch (err) {
+    err.throwLog()
+    process.exit(1)
+  }
   return `Successfully compiled ${fname}`
 }
 

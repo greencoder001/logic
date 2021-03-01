@@ -14,6 +14,22 @@ exit(ERR_EXIT_CODE)`
   }
 }
 
+class FileDoesntExistsError extends Error {
+  constructor (file) {
+    super(`File ${file} doesn't exists`)
+    this.name = 'FileDoesntExistsError'
+  }
+
+  str () {
+    return `print("${this.message}")
+exit(ERR_EXIT_CODE)`
+  }
+
+  throwLog () {
+    console.log(`${this.name}: ${this.message}`)
+  }
+}
+
 class LGPInvalidPkgError extends Error {
   constructor (pkgname) {
     super(`LGP: Invalid Package ${pkgname}`)
@@ -30,4 +46,4 @@ exit(ERR_EXIT_CODE)`
   }
 }
 
-module.exports = { LGPImportError, LGPInvalidPkgError }
+module.exports = { LGPImportError, LGPInvalidPkgError, FileDoesntExistsError }
