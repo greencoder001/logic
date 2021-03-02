@@ -29,14 +29,17 @@ print('Hello World')
 var tCount = 0
 var fCount = 0
 
-repeat 100:
-if random.bit() == 1:
+for(counter=0;counter<100;counter++){
+if(random.bit() == 1){
 tCount += 1
-else:
+}else{
 fCount += 1
 
+}
 print(`${fCount}x 0`)
+}
 print(`${tCount}x 1`)
+}
 
 var win = new Window()
 win.on('ready', -> {

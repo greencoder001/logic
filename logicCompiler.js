@@ -137,10 +137,20 @@ async function compile (filepath, exportpath, fname, exportType, fex) {
     if (trimmed.startsWith('import ')) {
       const pkgname = withoutTabs.substr(7)
       exported += await imppkg(exportType, pkgname, exportpath, fname, { exportType, fex }) + '\n'
-    } else if (withoutTabs.startsWith('if') && withoutTabs.endsWith(':') && (fex === 'js' || fex === '.__logicapplication__')) {
-      const condition = withoutTabs.substr(3, withoutTabs.length - 4)
-      console.log(condition)
+    } else if (withoutTabs.startsWith('if') && (fex === 'js' || fex === '.__logicapplication__')) {
+      const condition = withoutTabs.substr(3, withoutTabs.length - 5)
       exported += 'if(' + condition + '){\n'
+      ifConditions += 1
+    } else if (withoutTabs.startsWith('else') && (fex === 'js' || fex === '.__logicapplication__')) {
+      exported += 'else{\n'
+      ifConditions += 1
+    } else if (withoutTabs.startsWith('repeat') && (fex === 'js' || fex === '.__logicapplication__')) {
+      const count = withoutTabs.substr(7).replace(/:/g, '')
+      exported += 'for(counter=0;counter<' + count + ';counter++){\n'
+      ifConditions += 1
+    } else if (withoutTabs.startsWith('repeat') && (fex === 'py')) {
+      const count = withoutTabs.substr(7, withoutTabs.length - 5).replace(/:/g, '')
+      exported += 'for counter in range(0,' + count + '):\n'
       ifConditions += 1
     } else {
       let tabcount = 0
@@ -151,7 +161,7 @@ async function compile (filepath, exportpath, fname, exportType, fex) {
       }
       let suffix = ''
       if (tabcount < ifConditions && (fex !== 'py')) {
-        suffix = '}'
+        suffix = '}\n'
         ifConditions -= 1
       }
 
