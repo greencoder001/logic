@@ -77,13 +77,16 @@ async function imppkg (expt, pkgname, pathdir4proj, fname, { exportType, fex }) 
       console.log(chalk.keyword('orange')('[LGP] Fetching ' + pkgname))
       cache[pkgname] = ctime
       fs.writeFileSync(cfile, JSON.stringify(cache))
-      const fetched = await getLgpPkg(pkgname)
+      const fetched = `# NO_LOGIC_IMPORT;
+${await getLgpPkg(pkgname)}`
       fs.writeFileSync(path.join(pathdir4proj, path.join('__logic__', path.join(fname, path.join('__modules__', `${pkgname}.lgp`)))), fetched)
       console.log(chalk.keyword('orange')('[LGP] COMPILING ' + pkgname))
-      fs.writeFileSync(path.join(pathdir4proj, path.join('__logic__', path.join(fname, path.join('__modules__', `${pkgname}.__compiled__.lgp`)))), await compile(path.join(pathdir4proj, path.join('__logic__', path.join(fname, path.join('__modules__', `${pkgname}.lgp`)))), path.join(pathdir4proj, path.join('__logic__', path.join(fname, '__modules__'))), `${pkgname}`, exportType, fex))
-      return fetched
+      let compiled = await compile(path.join(pathdir4proj, path.join('__logic__', path.join(fname, path.join('__modules__', `${pkgname}.lgp`)))), path.join(pathdir4proj, path.join('__logic__', path.join(fname, '__modules__'))), `${pkgname}`, exportType, fex)
+      compiled = compiled.replace(/@endfile;/g, '@END_OF_THIS_PKG;')
+      fs.writeFileSync(path.join(pathdir4proj, path.join('__logic__', path.join(fname, path.join('__modules__', `${pkgname}.__compiled__.lgp`)))), compiled)
+      return compiled
     } else {
-      return fs.readFileSync(path.join(pathdir4proj, path.join('__logic__', path.join(fname, path.join('__modules__', `${pkgname}.lgp`)))))
+      return fs.readFileSync(path.join(pathdir4proj, path.join('__logic__', path.join(fname, path.join('__modules__', `${pkgname}.__compiled__.lgp`)))))
     }
   } else {
     const err = new LGPImportError(pkgname)
@@ -160,7 +163,7 @@ async function compile (filepath, exportpath, fname, exportType, fex) {
     }
   }
 
-  return exported.replace(/#(.*?);/g, '/* #$1; */')
+  return exported.replace(/#(.*?);/g, '/* #$1; */').replace(/\/\* \/\* # NO_LOGIC_IMPORT; \*\/ \*\//g, '')
 }
 
 module.exports = {

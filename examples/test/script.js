@@ -1,20 +1,26 @@
+
 /* Start LGP Package: logic */
-import lgp:https://raw.githubusercontent.com/greencoder001/lgp_logic/main/cli.logic
+undefined
 var ERR_EXIT_CODE = 1
 
 
 /* End LGP Package: logic */
+/* @END_OF_THIS_PKG; */
+
 var print=console.log;
 
 var random={int:function(min,max){return Math.floor(Math.random()*(max-min)+min)},bit:function(){return Math.round(Math.random())},cryptobit:function(){var c=parseInt(crypto.getRandomValues(new Uint32Array(1))[0].toString()[0]);if(c>=5){return 1}else{return 0}}};
 
 print("LGP: Can't find Package gui")
 exit(ERR_EXIT_CODE)
+
 /* Start LGP Package: lgptest */
-import lgp:https://gist.githubusercontent.com/greencoder001/191e4c1099b83ee61fab1bef0b01ea19/raw/17b50f64396ade819966e3bf4f934c89a7ccbd22/importtest.logic
+undefined
 print('LGP is working!')
 
 /* End LGP Package: lgptest */
+/* @END_OF_THIS_PKG; */
+
 print("LGP: Can't find Package tracking")
 exit(ERR_EXIT_CODE)
 
