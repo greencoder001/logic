@@ -53,7 +53,7 @@ async function isLgpPkg (pkname) {
   return false
 }
 
-async function imppkg (expt, pkgname, pathdir4proj, fname) {
+async function imppkg (expt, pkgname, pathdir4proj, fname, { exportType, fex }) {
   const cfile = path.join(pathdir4proj, path.join('__logic__', path.join(fname, path.join('__modules__', 'cache.json'))))
   const pkpath = path.join(__dirname, path.join('pkg', path.join(expt, `${pkgname.trim()}.lgp`)))
   pkgname = pkgname.trim()
@@ -79,6 +79,8 @@ async function imppkg (expt, pkgname, pathdir4proj, fname) {
       fs.writeFileSync(cfile, JSON.stringify(cache))
       const fetched = await getLgpPkg(pkgname)
       fs.writeFileSync(path.join(pathdir4proj, path.join('__logic__', path.join(fname, path.join('__modules__', `${pkgname}.lgp`)))), fetched)
+      console.log(chalk.keyword('orange')('[LGP] COMPILING ' + pkgname))
+      fs.writeFileSync(path.join(pathdir4proj, path.join('__logic__', path.join(fname, path.join('__modules__', `${pkgname}.__compiled__.lgp`)))), await compile(path.join(pathdir4proj, path.join('__logic__', path.join(fname, path.join('__modules__', `${pkgname}.lgp`)))), path.join(pathdir4proj, path.join('__logic__', path.join(fname, '__modules__'))), `${pkgname}`, exportType, fex))
       return fetched
     } else {
       return fs.readFileSync(path.join(pathdir4proj, path.join('__logic__', path.join(fname, path.join('__modules__', `${pkgname}.lgp`)))))
@@ -131,7 +133,7 @@ async function compile (filepath, exportpath, fname, exportType, fex) {
 
     if (trimmed.startsWith('import ')) {
       const pkgname = withoutTabs.substr(7)
-      exported += await imppkg(exportType, pkgname, exportpath, fname) + '\n'
+      exported += await imppkg(exportType, pkgname, exportpath, fname, { exportType, fex }) + '\n'
     } else if (withoutTabs.startsWith('if') && withoutTabs.endsWith(':') && (fex === 'js' || fex === '.__logicapplication__')) {
       const condition = withoutTabs.substr(3, withoutTabs.length - 4)
       console.log(condition)
