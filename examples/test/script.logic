@@ -10,10 +10,10 @@ var tCount = 0
 var fCount = 0
 
 repeat 100:
-    if random.bit() == 1:
-        tCount += 1
-    else:
-        fCount += 1
+  if random.bit() == 1:
+    tCount += 1
+  else:
+    fCount += 1
 
 print(`${fCount}x 0`)
 print(`${tCount}x 1`)
