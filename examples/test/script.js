@@ -5,7 +5,6 @@ var ERR_EXIT_CODE = 1
 
 
 /* End LGP Package: logic */
-/* @END_OF_THIS_PKG; */
 
 var print=console.log;
 
@@ -19,7 +18,6 @@ undefined
 print('LGP is working!')
 
 /* End LGP Package: lgptest */
-/* @END_OF_THIS_PKG; */
 
 print("LGP: Can't find Package tracking")
 exit(ERR_EXIT_CODE)
@@ -36,10 +34,9 @@ tCount += 1
 fCount += 1
 
 }
-print(`${fCount}x 0`)
+print("" + (fCount).toString() + "x 0")
 }
-print(`${tCount}x 1`)
-}
+print("" + (tCount).toString() + "x 1")
 
 var win = new Window()
 win.on('ready', -> {
@@ -49,7 +46,6 @@ win.setLang(track().language)
 win.body.set(`
 <h1>Example</h1>
 `)
-win.$('h1').set(win.$('h1').get() + ' <i>(Edited)</i>')
+win.$('h1').set("" + (win.$('h1').get()).toString() + " <i>(Edited)</i>")
 })
 
-/* @endfile; */

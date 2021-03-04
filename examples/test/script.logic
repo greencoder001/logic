@@ -26,5 +26,5 @@ win.on('ready', -> {
   win.body.set(`
     <h1>Example</h1>
   `)
-  win.$('h1').set(win.$('h1').get() + ' <i>(Edited)</i>')
+  win.$('h1').set(`${win.$('h1').get()} <i>(Edited)</i>`)
 })

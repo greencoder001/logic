@@ -95,6 +95,16 @@ ${await getLgpPkg(pkgname)}`
   }
 }
 
+async function parseLineOfLogic (line) {
+  line = line.replace(/`([\s\S]*?)`/gim, (match) => {
+    match = match.replace(/\n/gm, '\\n').replace(/`/g, '"')
+    match = match.replace(/\$\{([\s\S]*?)\}/gim, '" + ($1).toString() + "')
+    return match
+  })
+
+  return line
+}
+
 async function compile (filepath, exportpath, fname, exportType, fex) {
   if (!fs.existsSync(path.join(exportpath, '__logic__'))) {
     fs.mkdirSync(path.join(exportpath, '__logic__'))
@@ -142,8 +152,7 @@ async function compile (filepath, exportpath, fname, exportType, fex) {
       exported += 'if(' + condition + '){\n'
       ifConditions += 1
     } else if (withoutTabs.startsWith('else') && (fex === 'js' || fex === '.__logicapplication__')) {
-      exported += 'else{\n'
-      ifConditions += 1
+      exported += '}else{\n'
     } else if (withoutTabs.startsWith('repeat') && (fex === 'js' || fex === '.__logicapplication__')) {
       const count = withoutTabs.substr(7).replace(/:/g, '')
       exported += 'for(counter=0;counter<' + count + ';counter++){\n'
@@ -152,7 +161,25 @@ async function compile (filepath, exportpath, fname, exportType, fex) {
       const count = withoutTabs.substr(7, withoutTabs.length - 5).replace(/:/g, '')
       exported += 'for counter in range(0,' + count + '):\n'
       ifConditions += 1
+    } else if (line.includes('/* @endfile; */')) {
+      let tabcount = 0
+      while (line.includes('  ')) {
+        tabcount += 1
+        line = line.replace(/ {2}/g, '')
+        let suffix = ''
+        if (tabcount < ifConditions && (exportType !== 'python' && exportType !== 'py')) {
+          suffix = '}'
+          ifConditions -= 1
+        }
+        if (exportType === 'application' || exportType === 'webjs') {
+          exported += suffix + '/*endfile*/\n'
+        }
+        if (exportType === 'python' || exportType === 'py') {
+          exported += suffix + '\n"""endfile"""\n'
+        }
+      }
     } else {
+      line = await parseLineOfLogic(line)
       let tabcount = 0
       const lb = line
       while (line.includes('  ') || line.includes('\t')) {
