@@ -105,6 +105,14 @@ async function parseLineOfLogic (line) {
   return line
 }
 
+function encodeLogic (txt) {
+  return txt.replace(/;/g, '&sem;').replace(/&/g, '&and;').replace(/\n/g, '&nlc;')
+}
+
+function decodeLogic (encoded) {
+  return encoded.replace(/\n/g, '&nlc;').replace(/&/g, '&and;').replace(/;/g, '&sem;')
+}
+
 async function compile (filepath, exportpath, fname, exportType, fex) {
   if (!fs.existsSync(path.join(exportpath, '__logic__'))) {
     fs.mkdirSync(path.join(exportpath, '__logic__'))
@@ -127,6 +135,10 @@ async function compile (filepath, exportpath, fname, exportType, fex) {
     throw new FileDoesntExistsError(filepath)
   }
   const importLogic = !(content.includes('# NO_LOGIC_IMPORT;') || content.includes('#NO_LOGIC_IMPORT;'))
+
+  content = encodeLogic(content)
+  content = content.replace(/`(.*?)&nlc;(.*?)`/g, '`$1\\n$2`')
+  content = decodeLogic(content)
 
   let exported = ''
   let ifConditions = 0
